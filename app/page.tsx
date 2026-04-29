@@ -3,6 +3,8 @@
 import { GitBranch } from 'lucide-react';
 import pkceChallenge from 'pkce-challenge';
 
+
+
 export default function Home() {
   const BACKEND_URL = "http://localhost:3000"; // Or your live backend URL
 
@@ -10,7 +12,6 @@ export default function Home() {
     const { code_challenge, code_verifier } = await pkceChallenge();
     sessionStorage.setItem('code_verifier', code_verifier);
 
-    // Added &state=web to differentiate from CLI
     window.location.href = `${BACKEND_URL}/auth/github?code_challenge=${code_challenge}&state=web`;
   };
 
@@ -29,6 +30,16 @@ export default function Home() {
           Continue with GitHub
         </button>
       </div>
+
+        {/* Legal/Context Footer */}
+        <p className="mt-6 text-xs text-gray-400">
+          This portal enforces strict HTTP-Only cookie verification and API versioning parameters.
+        </p>
+
+      {/* External Attribution Footer */}
+      <footer className="mt-8 text-xs text-gray-400">
+        HNG14 Internship • Stage 3 Assessment
+      </footer>
     </div>
   );
 }
@@ -65,16 +76,16 @@ export default function Home() {
 //           Continue with GitHub
 //         </a>
 
-//         {/* Legal/Context Footer */}
-//         <p className="mt-6 text-xs text-gray-400">
-//           This portal enforces strict HTTP-Only cookie verification and API versioning parameters.
-//         </p>
-//       </div>
+      //   {/* Legal/Context Footer */}
+      //   <p className="mt-6 text-xs text-gray-400">
+      //     This portal enforces strict HTTP-Only cookie verification and API versioning parameters.
+      //   </p>
+      // </div>
 
-//       {/* External Attribution Footer */}
-//       <footer className="mt-8 text-xs text-gray-400">
-//         HNG14 Internship • Stage 3 Assessment
-//       </footer>
+      // {/* External Attribution Footer */}
+      // <footer className="mt-8 text-xs text-gray-400">
+      //   HNG14 Internship • Stage 3 Assessment
+      // </footer>
 //     </div>
 //   );
 // }
