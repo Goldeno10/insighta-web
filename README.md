@@ -23,7 +23,7 @@ Deploy the web portal directly on your development machine [TRD]:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com
+git clone https://github.com/Goldeno10/insighta-web.git
 cd insighta-web
 
 # 2. Install required extensions
@@ -36,7 +36,7 @@ touch .env.local
 Populate your `.env.local` with the reference point pointing to your live infrastructure:
 
 ```
-NEXT_PUBLIC_BACKEND_URL="https://vercel.app"
+NEXT_PUBLIC_BACKEND_URL="https://hng-14-internship.vercel.app"
 ```
 
 Then trigger the execution engine:

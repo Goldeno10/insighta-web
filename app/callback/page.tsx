@@ -14,20 +14,22 @@ export default function CallbackPage() {
       
       if (!code || !code_verifier) return;
 
+      const BACKEND_URL = "https://hng-14-internship.vercel.app/" //"http://localhost:3000";
+
       try {
         // 1. Swap with Backend for JWTs
-        const res = await axios.post('http://localhost:3000/api/auth/token', {
+        const res = await axios.post(`${BACKEND_URL}/api/auth/token`, {
           code,
           code_verifier
         });
 
         // 2. Call your INTERNAL Web API route to seal them in HTTP-only cookies!
-        await axios.post('/api/auth/login', {
+        await axios.post(`${BACKEND_URL}/api/auth/login`, {
           access_token: res.data.access_token,
           refresh_token: res.data.refresh_token
         });
 
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       } catch (err) {
         console.error("Login failed", err);
       }

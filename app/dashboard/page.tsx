@@ -1,21 +1,23 @@
 import { cookies } from 'next/headers';
+import Link from 'next/link';
 import { LogOut, RefreshCcw, Database } from 'lucide-react';
 
-async function getProfiles() {
+// 1. Pass the target page straight to the fetch query
+async function getProfiles(page: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get('access_token')?.value;
 
   if (!token) {
     throw new Error("No access token found");
   }
+  const BACKEND_URL = "https://hng-14-internship.vercel.app/" //"http://localhost:3000";
 
-  // Fetching data using your Live Vercel Backend URL
-  const res = await fetch('https://vercel.app', {
+  // Target your localhost (or your live deployed Vercel URL later)
+  const res = await fetch(`${BACKEND_URL}/api/profiles?page=${page}&limit=10`, {
     headers: {
       'X-API-Version': '1',
       'Authorization': `Bearer ${token}`,
     },
-    // Prevent Next.js from caching the data so it updates dynamically
     cache: 'no-store', 
   });
 
@@ -26,10 +28,20 @@ async function getProfiles() {
   return res.json();
 }
 
-export default async function DashboardPage() {
+// 2. Next.js natively populates searchParams on Server Components
+export default async function DashboardPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ page?: string }> 
+}) {
   try {
-    const response = await getProfiles();
+    // Resolve the async searchParams (Required in Next.js 15/16)
+    const resolvedParams = await searchParams;
+    const page = resolvedParams.page || "1";
+    
+    const response = await getProfiles(page);
     const profiles = response.data;
+    const pagination = response.pagination;
 
     return (
       <div className="min-h-screen bg-gray-50 p-8">
@@ -80,8 +92,47 @@ export default async function DashboardPage() {
               </table>
             </div>
             
-            <div className="p-4 bg-gray-50 border-t border-gray-100 text-xs text-gray-500 text-center">
-              Showing page {response.pagination.current_page} of {response.pagination.total_pages}
+            {/* 3. Updated Interactive Pagination Footer */}
+            <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
+              <div>
+                Showing page {pagination.current_page} of {pagination.total_pages}
+              </div>
+
+              <div className="flex gap-2">
+                {/* Previous Button */}
+                {pagination.current_page > 1 ? (
+                  <Link 
+                    href={`/dashboard?page=${Number(page) - 1}`}
+                    className="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    Previous
+                  </Link>
+                ) : (
+                  <button 
+                    disabled 
+                    className="bg-gray-50 cursor-not-allowed border border-gray-100 px-4 py-2 rounded-lg text-sm text-gray-400"
+                  >
+                    Previous
+                  </button>
+                )}
+
+                {/* Next Button */}
+                {pagination.has_next ? (
+                  <Link 
+                    href={`/dashboard?page=${Number(page) + 1}`}
+                    className="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    Next
+                  </Link>
+                ) : (
+                  <button 
+                    disabled 
+                    className="bg-gray-50 cursor-not-allowed border border-gray-100 px-4 py-2 rounded-lg text-sm text-gray-400"
+                  >
+                    Next
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
