@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Insighta Labs+ Web Portal 🌐
 
-## Getting Started
+The dedicated web interface for the Insighta Labs+ Demographic Intelligence platform. This project operates as a secure client portal built to visualize complex demographic query data.
 
-First, run the development server:
+## 🌟 Features
+
+- **Strict Server-Side Rendering** – Data is fetched directly on the Next.js server to shield tokens from client execution [TRD].
+- **HTTP-Only Cookies** – Prevents Cross-Site Scripting (XSS) attacks by keeping session tokens outside of JavaScript reach [TRD].
+- **State Management Protection** – Enforces strict SameSite handling to prevent CSRF vectors [TRD].
+- **Short-Lived Sessions** – Native access barriers matching the short expiration windows of the API [TRD].
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Session Tooling**: `cookie`
+- **Asset Library**: Lucide React
+
+## 🚀 Installation & Local Setup
+
+Deploy the web portal directly on your development machine [TRD]:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com
+cd insighta-web
+
+# 2. Install required extensions
+npm install
+
+# 3. Create your environment parameters
+touch .env.local
+```
+
+Populate your `.env.local` with the reference point pointing to your live infrastructure:
+
+```
+NEXT_PUBLIC_BACKEND_URL="https://vercel.app"
+```
+
+Then trigger the execution engine:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔐 Security Parameters & Flow
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Gateway** – The user lands on the standard login terminal mapped at `/` [TRD].
+2. **Authorization** – Clicking the anchor handles absolute redirect paths directly to the GitHub OAuth trigger at the backend [TRD].
+3. **Execution** – Upon successful return, generated access vectors are sealed by the Next.js backend into strict cookies before passing view properties onto the `/dashboard` route [TRD].
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📄 License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
