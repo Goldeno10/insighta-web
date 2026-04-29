@@ -26,7 +26,7 @@ function CallbackContent() {
         });
 
         // Call your web portal's internal route to seal the tokens
-        await axios.post(`${BACKEND_URL}/api/auth/login`, {
+        await axios.post(`${BACKEND_URL}/api/auth/token`, {
           access_token: res.data.access_token,
           refresh_token: res.data.refresh_token
         });
