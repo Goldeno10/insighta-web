@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { LogOut, RefreshCcw, Database } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 // 1. Pass the target page straight to the fetch query
 async function getProfiles(page: string) {
