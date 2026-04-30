@@ -12,6 +12,16 @@ function CallbackContent() {
   useEffect(() => {
     const completeLogin = async () => {
       const code = searchParams.get('code');
+      const state = searchParams.get('state');
+
+      if (state! && state == "cli") {
+        // For CLI, we just return the code in the URL for the CLI to capture
+        window.location.href = `http://localhost:4800?code=${code}`;
+        return;
+      }
+        // return NextResponse.redirect(`http://localhost:4800?code=${code}`);
+
+
       const code_verifier = sessionStorage.getItem('code_verifier');
       
       if (!code || !code_verifier) return;
