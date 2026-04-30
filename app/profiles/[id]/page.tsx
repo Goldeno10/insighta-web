@@ -10,7 +10,11 @@ async function getProfileDetail(id: string) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profiles/${id}`, {
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://hng-14-internship.vercel.app"; //"http://localhost:3000";
+
+  // Ta
+
+  const res = await fetch(`${BACKEND_URL}/api/profiles/${id}`, {
     headers: {
       'X-API-Version': '1',
       'Authorization': `Bearer ${token}`,
