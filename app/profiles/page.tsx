@@ -44,6 +44,7 @@ export default async function DashboardPage({ searchParams }: {
     const pagination = response.pagination;
 
     const logout = async () => {
+      "use server";  // <-- required
       const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://hng-14-internship.vercel.app"; //"http://localhost:3000";
       const cookieStore = await cookies();
 
@@ -54,11 +55,11 @@ export default async function DashboardPage({ searchParams }: {
           'Authorization': `Bearer ${cookieStore.get('access_token')?.value}`,
         },
       });
-      // Clear cookies on the client side
+
       cookieStore.delete('access_token');
       cookieStore.delete('refresh_token');
-      // Redirect to login
-      window.location.href = '/';
+
+      redirect('/');  // from 'next/navigation', not window.location
     };
 
     return (
