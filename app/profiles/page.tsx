@@ -20,30 +20,46 @@ async function getProfiles(page: string) {
       'X-API-Version': '1',
       'Authorization': `Bearer ${token}`,
     },
-    cache: 'no-store', 
+    cache: 'no-store',
   });
 
   if (!res.ok) {
     throw new Error('Session expired or unauthorized');
   }
-  
+
   return res.json();
 }
 
 // 2. Next.js natively populates searchParams on Server Components
-export default async function DashboardPage({ 
-  searchParams 
-}: { 
-  searchParams: Promise<{ page?: string }> 
+export default async function DashboardPage({ searchParams }: {
+  searchParams: Promise<{ page?: string }>
 }) {
   try {
     // Resolve the async searchParams (Required in Next.js 15/16)
     const resolvedParams = await searchParams;
     const page = resolvedParams.page || "1";
-    
+
     const response = await getProfiles(page);
     const profiles = response.data;
     const pagination = response.pagination;
+
+    const logout = async () => {
+      const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://hng-14-internship.vercel.app"; //"http://localhost:3000";
+      const cookieStore = await cookies();
+
+      await fetch(`${BACKEND_URL}/auth/logout`, {
+        method: 'POST',
+        headers: {
+          'X-API-Version': '1',
+          'Authorization': `Bearer ${cookieStore.get('access_token')?.value}`,
+        },
+      });
+      // Clear cookies on the client side
+      cookieStore.delete('access_token');
+      cookieStore.delete('refresh_token');
+      // Redirect to login
+      window.location.href = '/';
+    };
 
     return (
       <div className="min-h-screen bg-gray-50 p-8">
@@ -58,7 +74,7 @@ export default async function DashboardPage({
               <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
                 <RefreshCcw size={16} /> Refresh
               </button>
-              <button className="flex items-center gap-2 bg-red-600 px-4 py-2 rounded-lg text-sm text-white hover:bg-red-700">
+              <button className="flex items-center gap-2 bg-red-600 px-4 py-2 rounded-lg text-sm text-white hover:bg-red-700" onClick={logout}  >
                 <LogOut size={16} /> Logout
               </button>
             </div>
@@ -70,7 +86,7 @@ export default async function DashboardPage({
               <Database className="text-blue-600" size={20} />
               <h2 className="text-lg font-semibold text-gray-800">Seed Profiles Database</h2>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-medium border-b border-gray-100">
@@ -93,7 +109,7 @@ export default async function DashboardPage({
                 </tbody>
               </table>
             </div>
-            
+
             {/* 3. Updated Interactive Pagination Footer */}
             <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
               <div>
@@ -103,15 +119,15 @@ export default async function DashboardPage({
               <div className="flex gap-2">
                 {/* Previous Button */}
                 {pagination.current_page > 1 ? (
-                  <Link 
+                  <Link
                     href={`/dashboard?page=${Number(page) - 1}`}
                     className="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
                   >
                     Previous
                   </Link>
                 ) : (
-                  <button 
-                    disabled 
+                  <button
+                    disabled
                     className="bg-gray-50 cursor-not-allowed border border-gray-100 px-4 py-2 rounded-lg text-sm text-gray-400"
                   >
                     Previous
@@ -120,15 +136,15 @@ export default async function DashboardPage({
 
                 {/* Next Button */}
                 {pagination.has_next ? (
-                  <Link 
+                  <Link
                     href={`/dashboard?page=${Number(page) + 1}`}
                     className="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
                   >
                     Next
                   </Link>
                 ) : (
-                  <button 
-                    disabled 
+                  <button
+                    disabled
                     className="bg-gray-50 cursor-not-allowed border border-gray-100 px-4 py-2 rounded-lg text-sm text-gray-400"
                   >
                     Next
