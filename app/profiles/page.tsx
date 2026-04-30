@@ -120,7 +120,7 @@ export default async function DashboardPage({ searchParams }: {
                 {/* Previous Button */}
                 {pagination.current_page > 1 ? (
                   <Link
-                    href={`/dashboard?page=${Number(page) - 1}`}
+                    href={`/profiles?page=${Number(page) - 1}`}
                     className="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
                   >
                     Previous
@@ -137,7 +137,7 @@ export default async function DashboardPage({ searchParams }: {
                 {/* Next Button */}
                 {pagination.has_next ? (
                   <Link
-                    href={`/dashboard?page=${Number(page) + 1}`}
+                    href={`/profiles?page=${Number(page) + 1}`}
                     className="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
                   >
                     Next
