@@ -6,13 +6,19 @@ import pkceChallenge from 'pkce-challenge';
 
 
 export default function Home() {
-  const BACKEND_URL = "https://hng-14-internship.vercel.app/" //"http://localhost:3000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const handleLogin = async () => {
     const { code_challenge, code_verifier } = await pkceChallenge();
+    const authParams = new URLSearchParams({
+          code_challenge,
+          code_challenge_method: 'S256',
+          code_verifier,
+          redirect: 'web',
+        });
     sessionStorage.setItem('code_verifier', code_verifier);
 
-    window.location.href = `${BACKEND_URL}/auth/github?code_challenge=${code_challenge}&state=web`;
+    window.location.href = `${BACKEND_URL}/auth/github?${authParams.toString()}`;
   };
 
   return (

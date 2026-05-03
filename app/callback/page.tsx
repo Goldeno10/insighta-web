@@ -3,6 +3,7 @@
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import { url } from 'inspector/promises';
 
 // 1. Move the search params logic into a child component
 function CallbackContent() {
@@ -11,34 +12,18 @@ function CallbackContent() {
 
   useEffect(() => {
     const completeLogin = async () => {
-      const code = searchParams.get('code');
-      const state = searchParams.get('state');
+      // const code = searchParams.get('code');
 
-      if (state! && state == "cli") {
-        // For CLI, we just return the code in the URL for the CLI to capture
-        window.location.href = `http://localhost:4800?code=${code}`;
-        return;
-      }
-        // return NextResponse.redirect(`http://localhost:4800?code=${code}`);
-
-
-      const code_verifier = sessionStorage.getItem('code_verifier');
-      
-      if (!code || !code_verifier) return;
-
-      const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://hng-14-internship.vercel.app"; //"http://localhost:3000";
+        const access_token = searchParams.get('access_token');
+        const refresh_token = searchParams.get('refresh_token');
+        const expires_in = searchParams.get('expires_in');
 
       try {
-        // Exchange the code and the verifier with your backend
-        const res = await axios.post(`${BACKEND_URL}/api/auth/token`, {
-          code,
-          code_verifier
-        });
-
         // Call your web portal's internal route to seal the tokens
         await axios.post("/api/auth/login", {
-          access_token: res.data.access_token,
-          refresh_token: res.data.refresh_token
+          access_token: access_token,
+          refresh_token: refresh_token,
+          expires_in: expires_in
         });
 
         // Redirect to dashboard now that cookies are set
@@ -65,52 +50,3 @@ export default function CallbackPage() {
     </div>
   );
 }
-
-
-
-// 'use client';
-// import { useEffect } from 'react';
-// import { useRouter, useSearchParams } from 'next/navigation';
-// import axios from 'axios';
-
-// export default function CallbackPage() {
-//   const router = useRouter();
-//   const searchParams = useSearchParams();
-
-//   useEffect(() => {
-//     const completeLogin = async () => {
-//       const code = searchParams.get('code');
-//       const code_verifier = sessionStorage.getItem('code_verifier');
-      
-//       if (!code || !code_verifier) return;
-
-//       const BACKEND_URL = "https://hng-14-internship.vercel.app/" //"http://localhost:3000";
-
-//       try {
-//         // 1. Swap with Backend for JWTs
-//         const res = await axios.post(`${BACKEND_URL}/api/auth/token`, {
-//           code,
-//           code_verifier
-//         });
-
-//         // 2. Call your INTERNAL Web API route to seal them in HTTP-only cookies!
-//         await axios.post(`${BACKEND_URL}/api/auth/login`, {
-//           access_token: res.data.access_token,
-//           refresh_token: res.data.refresh_token
-//         });
-
-//         window.location.href = '/dashboard';
-//       } catch (err) {
-//         console.error("Login failed", err);
-//       }
-//     };
-
-//     completeLogin();
-//   }, [searchParams, router]);
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-//       <p className="text-gray-600">Finalizing secure session, please wait...</p>
-//     </div>
-//   );
-// }

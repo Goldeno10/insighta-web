@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
 export async function POST(request: Request) {
-  const { access_token, refresh_token } = await request.json();
+  const { access_token, refresh_token, expires_in } = await request.json();
 
   const response = NextResponse.json({ status: 'success' });
 
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       httpOnly: true,     // Block JavaScript access (No XSS theft)
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict', // CSRF protection
-      maxAge: 180,        // 3 minutes
+      maxAge: parseInt(expires_in), // Align with token expiry
       path: '/',
     })
   );
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 300,        // 5 minutes
+      maxAge: parseInt(expires_in), // Align with token expiry
       path: '/',
     })
   );
