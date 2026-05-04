@@ -18,6 +18,7 @@ async function getProfileDetail(id: string) {
     headers: {
       "X-API-Version": "1",
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
     cache: "no-store",
   });

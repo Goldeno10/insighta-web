@@ -12,6 +12,7 @@ async function getMetrics() {
       headers: {
         "X-API-Version": "1",
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       cache: "no-store",
     }

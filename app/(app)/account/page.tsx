@@ -8,7 +8,11 @@ async function getAccount() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/me`,
     {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { 
+        Authorization: `Bearer ${token}`, 
+        "X-API-Version": "1", 
+        "Content-Type": "application/json" 
+      },
       cache: "no-store",
     }
   );
