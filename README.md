@@ -1,56 +1,85 @@
-# Insighta Labs+ Web Portal 🌐
+# Insighta Labs+ Web Portal
 
-The dedicated web interface for the Insighta Labs+ Demographic Intelligence platform. This project operates as a secure client portal built to visualize complex demographic query data.
+Web client for the Insighta Labs+ demographic intelligence API. It uses the Next.js App Router with server-side data fetching, HTTP-only cookies for tokens, and a teal-themed layout with sidebar navigation.
 
-## 🌟 Features
+## Features
 
-- **Strict Server-Side Rendering** – Data is fetched directly on the Next.js server to shield tokens from client execution [TRD].
-- **HTTP-Only Cookies** – Prevents Cross-Site Scripting (XSS) attacks by keeping session tokens outside of JavaScript reach [TRD].
-- **State Management Protection** – Enforces strict SameSite handling to prevent CSRF vectors [TRD].
-- **Short-Lived Sessions** – Native access barriers matching the short expiration windows of the API [TRD].
+- **GitHub sign-in** — PKCE-based redirect to the backend OAuth flow; tokens are sealed into cookies via `POST /api/auth/login` on `/callback`.
+- **Authenticated area** — Dashboard, paginated profiles, profile detail, search, and account pages. Session uses `Authorization: Bearer` from the server with cookies (not exposed to client JS).
+- **Admin CSV import** — `/profiles/import` uploads a CSV through a server action that proxies to `POST {BACKEND}/api/profiles/import` with admin verification (`x-user-role` is set only after `/api/users/me` confirms the `admin` role).
+- **Security** — HTTP-only, `SameSite=strict` cookies; API calls include `X-API-Version: 1` where applicable.
 
-## 🛠️ Tech Stack
+## Tech stack
 
-- **Framework**: Next.js (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Session Tooling**: `cookie`
-- **Asset Library**: Lucide React
+| Layer    | Choice                          |
+| -------- | ------------------------------- |
+| Framework | Next.js 16 (App Router), React 19 |
+| Language  | TypeScript                      |
+| Styling   | Tailwind CSS v4                 |
+| Icons     | Lucide React                    |
+| HTTP      | Native `fetch`, axios (callback) |
 
-## 🚀 Installation & Local Setup
+Read `node_modules/next/dist/docs/` when upgrading Next.js; this project may use conventions that differ from older Next.js releases.
 
-Deploy the web portal directly on your development machine [TRD]:
+## Prerequisites
+
+- Node.js compatible with Next.js 16
+- A running Insighta backend that exposes OAuth, `/api/users/me`, `/api/profiles`, `/api/profiles/search`, and (for admins) `/api/profiles/import`
+
+## Setup
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/Goldeno10/insighta-web.git
 cd insighta-web
-
-# 2. Install required extensions
 npm install
-
-# 3. Create your environment parameters
-touch .env.local
 ```
 
-Populate your `.env.local` with the reference point pointing to your live infrastructure:
+Create `.env.local` in the project root:
 
-```
-NEXT_PUBLIC_BACKEND_URL="https://hng-14-internship.vercel.app"
-```
-
-Then trigger the execution engine:
-
-```bash
-npm run dev
+```env
+# Required: base URL of the Insighta API (no trailing slash)
+NEXT_PUBLIC_BACKEND_URL=https://https://hng-14-internship.vercel.app
 ```
 
-## 🔐 Security Parameters & Flow
+Example for local API development:
 
-1. **Gateway** – The user lands on the standard login terminal mapped at `/` [TRD].
-2. **Authorization** – Clicking the anchor handles absolute redirect paths directly to the GitHub OAuth trigger at the backend [TRD].
-3. **Execution** – Upon successful return, generated access vectors are sealed by the Next.js backend into strict cookies before passing view properties onto the `/dashboard` route [TRD].
+```env
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
+```
 
-## 📄 License
+## Scripts
+
+| Command        | Description              |
+| -------------- | ------------------------ |
+| `npm run dev`  | Development server       |
+| `npm run build`| Production build         |
+| `npm run start`| Serve production build     |
+| `npm run lint` | ESLint                   |
+
+## Authentication flow
+
+1. User opens `/` and chooses **Continue with GitHub**; PKCE parameters are stored and the browser navigates to `{BACKEND}/auth/github?...`.
+2. After OAuth, the backend redirects to `/callback` with tokens in the query string.
+3. The client posts tokens to this app’s `POST /api/auth/login`, which sets `access_token` and `refresh_token` as HTTP-only cookies.
+4. The user is redirected to `/dashboard`.
+
+## Route overview
+
+| Path              | Purpose                                      |
+| ----------------- | -------------------------------------------- |
+| `/`               | Login                                        |
+| `/callback`       | OAuth callback; seals cookies                |
+| `/dashboard`      | Summary metrics                              |
+| `/profiles`       | Paginated profile table                      |
+| `/profiles/[id]`  | Profile detail                               |
+| `/profiles/import`| Admin CSV import (admin role only)           |
+| `/search`         | Profile search (`q`, `page` query params)    |
+| `/account`        | Current user from `/api/users/me`           |
+
+## Large CSV imports
+
+Server actions use an increased body size limit (`experimental.serverActions.bodySizeLimit` in `next.config.ts`, default `32mb` in this repo). Increase it if your CSVs are larger; for very large files you may prefer a dedicated streaming upload route.
+
+## License
 
 MIT

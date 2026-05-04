@@ -8,15 +8,31 @@ import {
   Search,
   UserCircle,
   Sparkles,
+  FileUp,
 } from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
 
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/profiles", label: "Profiles", icon: Users },
+  { href: "/profiles/import", label: "Import", icon: FileUp },
   { href: "/search", label: "Search", icon: Search },
   { href: "/account", label: "Account", icon: UserCircle },
 ];
+
+function navActive(href: string, pathname: string): boolean {
+  if (href === "/dashboard") return pathname === "/dashboard";
+  if (href === "/profiles/import") return pathname === "/profiles/import";
+  if (href === "/profiles") {
+    return (
+      pathname === "/profiles" ||
+      /^\/profiles\/[^/]+$/.test(pathname)
+    );
+  }
+  if (href === "/search") return pathname === "/search";
+  if (href === "/account") return pathname === "/account";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -42,10 +58,7 @@ export function AppSidebar() {
         aria-label="Main"
       >
         {nav.map(({ href, label, icon: Icon }) => {
-          const active =
-            href === "/dashboard"
-              ? pathname === "/dashboard"
-              : pathname === href || pathname.startsWith(`${href}/`);
+          const active = navActive(href, pathname);
           return (
             <Link
               key={href}
