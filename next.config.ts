@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   experimental: {
     /** Large CSV uploads via server action (`importProfilesCsv`). Adjust if needed. */
     serverActions: {
-      bodySizeLimit: "32mb",
+      bodySizeLimit: "50mb",
     },
   },
 };

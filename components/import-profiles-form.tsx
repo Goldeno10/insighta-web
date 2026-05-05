@@ -9,7 +9,7 @@ export function ImportProfilesForm() {
   const [result, setResult] = useState<ImportProfilesResult | null>(null);
   const [fileLabel, setFileLabel] = useState<string | null>(null);
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setResult(null);
     const fd = new FormData(e.currentTarget);

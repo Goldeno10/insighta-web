@@ -65,7 +65,6 @@ export async function importProfilesCsv(
     headers: {
       Authorization: `Bearer ${token}`,
       "X-API-Version": "1",
-      "x-user-role": "admin",
     },
     body: outbound,
   });
